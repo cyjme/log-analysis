@@ -5,6 +5,7 @@ import (
 	"ideaparLog/database"
 	"log"
 	"fmt"
+	"database/sql"
 )
 
 const (
@@ -32,7 +33,7 @@ func (repo *PvRepo) List(query string) ([]model.Pv, error) {
 	var pvs = []model.Pv{}
 
 	if err != nil {
-		fmt.Println("errrrr",err)
+		fmt.Println("errrrr", err)
 		return pvs, err
 	}
 
@@ -54,4 +55,23 @@ func (repo *PvRepo) GetLastRow() model.Pv {
 	}
 
 	return pv
+}
+
+func (repo *PvRepo) CountQuery(query string) (int, error) {
+	rows, err := database.DBCon.Query(query)
+	if err != nil {
+		return 0, err
+		log.Fatal(err)
+	}
+	return checkCount(rows), nil
+}
+
+func checkCount(rows *sql.Rows) (count int) {
+	for rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return count
 }

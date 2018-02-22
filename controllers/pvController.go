@@ -19,3 +19,12 @@ func (ctrl *PvController) List(c *gin.Context) {
 
 	c.JSON(200, gin.H{"data": pvs})
 }
+func (ctrl *PvController) CountQuery(c *gin.Context) {
+	query := c.Query("query")
+
+	count, err := PvRepo.CountQuery(query)
+	if err != nil {
+		c.JSON(500, err)
+	}
+	c.JSON(200, count)
+}

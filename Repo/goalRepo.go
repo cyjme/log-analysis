@@ -8,8 +8,8 @@ import (
 
 const (
 	list   = "select * from goal"
-	create = "insert into goal(name, `desc`, dataUrl) values (?, ?, ?)"
-	update = "update goal set name=?, `desc`=?, dataUrl=? where id = ?"
+	create = "insert into goal(name, `desc`, dataUrl, targetData) values (?, ?, ?, ?)"
+	update = "update goal set name=?, `desc`=?, dataUrl=?, targetData=? where id = ?"
 	delete = "delete from goal where id = ?"
 )
 
@@ -34,7 +34,7 @@ func (repo *GoalRepo) List() []model.Goal {
 
 	for rows.Next() {
 		goal := model.Goal{}
-		err := rows.Scan(&goal.Id, &goal.Name, &goal.Desc, &goal.DataUrl)
+		err := rows.Scan(&goal.Id, &goal.Name, &goal.Desc, &goal.DataUrl, &goal.TargetData)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,7 +53,7 @@ func (repo *GoalRepo) Create(goal *model.Goal) {
 
 	defer stmt.Close()
 
-	stmt.Exec(goal.Name, goal.Desc, goal.DataUrl)
+	stmt.Exec(goal.Name, goal.Desc, goal.DataUrl, goal.TargetData)
 }
 
 func (repo *GoalRepo) Update(goal *model.Goal) {
@@ -63,7 +63,7 @@ func (repo *GoalRepo) Update(goal *model.Goal) {
 	}
 	defer stmt.Close()
 
-	stmt.Exec(goal.Name, goal.Desc, goal.DataUrl, goal.Id)
+	stmt.Exec(goal.Name, goal.Desc, goal.DataUrl, goal.TargetData, goal.Id)
 }
 
 func (repo *GoalRepo) Delete(id int) {
