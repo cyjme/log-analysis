@@ -5,12 +5,22 @@ import (
 	"ideaparLog/database"
 	"ideaparLog/controllers"
 	"fmt"
+	"time"
+	"ideaparLog/cmd/readPvLog"
 )
 
 func main() {
 	database.Init()
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+
+	ticker := time.NewTicker(time.Second * 10)
+	go func() {
+		for _ = range ticker.C {
+			fmt.Println("start read log")
+			readPvLog.Run()
+		}
+	}()
 
 	goalController := new(controllers.GoalController)
 	pvController := new(controllers.PvController)

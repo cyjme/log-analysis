@@ -1,4 +1,4 @@
-package main
+package readPvLog
 
 import (
 	"os"
@@ -17,7 +17,7 @@ var path = "/Users/jason/Code/icl/icl-main/log/pv.log"
 var timeLayout = "2006-01-02 15:04:05"
 var local, _ = time.LoadLocation("Asia/Shanghai")
 
-func main() {
+func Run() {
 	database.Init()
 	defer database.DBCon.Close()
 
