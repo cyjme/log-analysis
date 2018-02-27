@@ -14,7 +14,7 @@ func main() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	ticker := time.NewTicker(time.Second * 10)
+	ticker := time.NewTicker(time.Second * 30)
 	go func() {
 		for _ = range ticker.C {
 			fmt.Println("start read log")
