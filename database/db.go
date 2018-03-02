@@ -9,7 +9,7 @@ var DBCon *sql.DB
 var err error
 
 func Init() {
-	DBCon, err = sql.Open("mysql", "root:@/ideaparLog?charset=utf8&parseTime=True&loc=Local")
+	DBCon, err = sql.Open("mysql", "root:Mm#0987654321@/ideaparLog?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}

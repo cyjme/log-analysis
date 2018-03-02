@@ -6,19 +6,28 @@ import (
 	"ideaparLog/controllers"
 	"fmt"
 	"time"
-	"ideaparLog/cmd/readPvLog"
+	"ideaparLog/cmd/postToDingDing"
 )
 
 func main() {
 	database.Init()
+	defer database.DBCon.Close()
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+	postToDingDing.PostYesterDay()
 
-	ticker := time.NewTicker(time.Second * 30)
+	ticker := time.NewTicker(time.Second * 5)
 	go func() {
 		for _ = range ticker.C {
 			fmt.Println("start read log")
-			readPvLog.Run()
+			//readPvLog.Run()
+
+			now := time.Now()
+			fmt.Println(now)
+
+			if now.Hour() == 10 && now.Minute() == 0 {
+
+			}
 		}
 	}()
 
@@ -37,7 +46,7 @@ func main() {
 		c.JSON(200, "20")
 	})
 
-	r.Run("0.0.0.0:9999")
+	r.Run("0.0.0.0:10001")
 }
 
 func CORSMiddleware() gin.HandlerFunc {

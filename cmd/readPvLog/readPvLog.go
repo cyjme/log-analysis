@@ -4,28 +4,24 @@ import (
 	"os"
 	"bufio"
 	"strings"
-	"ideaparLog/database"
 	"ideaparLog/Repo"
 	"encoding/json"
 	"ideaparLog/model"
-	"log"
 	"time"
+	"fmt"
 )
 
 var pvRepo = new(Repo.PvRepo)
-var path = "/Users/jason/Code/icl/icl-main/log/pv.log"
+var path = "/var/space/icl/icl-main/log/pv.log"
 var timeLayout = "2006-01-02 15:04:05"
 var local, _ = time.LoadLocation("Asia/Shanghai")
 
 func Run() {
-	database.Init()
-	defer database.DBCon.Close()
-
 	lastLineNum := findLastLineNumInDatabase()
 
 	insertNewLogToDatabase(lastLineNum)
 }
-func parseOneLineLog(oneLineLog string) model.Pv {
+func parseOneLineLog(oneLineLog string) (model.Pv, error) {
 	start := strings.Index(oneLineLog, "{")
 	end := strings.Index(oneLineLog, "}")
 	rawString := oneLineLog[start:end+1]
@@ -34,11 +30,12 @@ func parseOneLineLog(oneLineLog string) model.Pv {
 	pv := model.Pv{}
 	err := json.Unmarshal([]byte(rawString), &pv)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Unmarshal string error")
+		return model.Pv{}, err
 	}
 	pv.Date, err = time.ParseInLocation(timeLayout, date, local)
 
-	return pv
+	return pv, err
 }
 
 func insertNewLogToDatabase(lastLineNum int) {
@@ -56,7 +53,10 @@ func insertNewLogToDatabase(lastLineNum int) {
 	for scanner.Scan() {
 
 		if line > lastLineNum {
-			pv := parseOneLineLog(scanner.Text())
+			pv, err := parseOneLineLog(scanner.Text())
+			if err != nil {
+				continue
+			}
 			pvRepo.Create(&pv)
 		}
 		line++
