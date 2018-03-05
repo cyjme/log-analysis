@@ -22,11 +22,21 @@ type ReqData struct {
 	Markdown Markdown `json:"markdown"`
 }
 
+func getNumByUrl(urlString string) string {
+	u, err := url.Parse(urlString)
+	q := u.Query()
+	u.RawQuery = q.Encode()
+	//pv
+	resp, err := http.Get(u.String())
+	checkErr("resp", err)
+	num, err := ioutil.ReadAll(resp.Body)
+	checkErr("ioutil", err)
 
-
+	return string(num)
+}
 
 func PostYesterDay() {
-	postUrl := "https://oapi.dingtalk.com/robot/send?access_token=d4ec0b6bc77e4a0d9d509641aa1b9107cec0564c5c4713bb1d036ec6d7de035a"
+	postUrl := "https://oapi.dingtalk.com/robot/send?access_token=2b4f269d94f7cc08b76dbdd2e156e23bf31a19b61d33a58301d77641ce77cfae"
 	bodyType := "application/json;charset=utf-8"
 
 	startDate := time.Now().AddDate(0, 0, -1).Format(timeLayout)
@@ -43,32 +53,24 @@ func PostYesterDay() {
 	desingerUrl := "https://www.ideapar.com/fetchOperateData?queryType=yesterday-desinger"
 	prooferUrl := "https://www.ideapar.com/fetchOperateData?queryType=yesterday-proofer"
 
-	u, err := url.Parse(pvUrl)
-	q := u.Query()
-	u.RawQuery = q.Encode()
-	//pv
-	resp, err := http.Get(u.String())
-	checkErr("resp", err)
-	pvNum, err := ioutil.ReadAll(resp.Body)
-	checkErr("ioutil", err)
-
-	fmt.Println("res", string(pvNum))
-	return
-	//uv
-	//newIp
-	//designer
-	//proofer
+	pvNum := getNumByUrl(pvUrl)
+	uvNum := getNumByUrl(uvUrl)
+	newIpNum := getNumByUrl(newIpUrl)
+	rqtNum := getNumByUrl(rqtUrl)
+	desingerNum := getNumByUrl(desingerUrl)
+	prooferNum := getNumByUrl(prooferUrl)
 
 	data := &ReqData{
 		Msgtype: "markdown",
 		Markdown: Markdown{
 			"昨日数据",
 			"### 昨日数据 \r\n" +
-				"- **pv**:1223 \r\n" +
-				"- **uv**:233 \r\n" +
-				"- **newIp**:2 \r\n" +
-				"- **新增设计师**:23 \r\n" +
-				"- **新增打样师**：23 \r\n",
+				"- **pv**:" + pvNum + " \r\n" +
+				"- **uv**:" + uvNum + " \r\n" +
+				"- **newIp**:" + newIpNum + " \r\n" +
+				"- **新增需求**:" + rqtNum + " \r\n" +
+				"- **新增设计师**:" + desingerNum + " \r\n" +
+				"- **新增打样师**：" + prooferNum + " \r\n",
 		},
 	}
 
@@ -80,7 +82,7 @@ func PostYesterDay() {
 
 	req := bytes.NewBuffer(jsonData)
 
-	resp, err = http.Post(postUrl, bodyType, req)
+	resp, err := http.Post(postUrl, bodyType, req)
 	if err != nil {
 		fmt.Println(err)
 	}

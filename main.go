@@ -14,9 +14,8 @@ func main() {
 	defer database.DBCon.Close()
 	r := gin.Default()
 	r.Use(CORSMiddleware())
-	postToDingDing.PostYesterDay()
 
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Minute * 1)
 	go func() {
 		for _ = range ticker.C {
 			fmt.Println("start read log")
@@ -25,8 +24,8 @@ func main() {
 			now := time.Now()
 			fmt.Println(now)
 
-			if now.Hour() == 10 && now.Minute() == 0 {
-
+			if now.Hour() == 9 && now.Minute() == 59 {
+				postToDingDing.PostYesterDay()
 			}
 		}
 	}()
