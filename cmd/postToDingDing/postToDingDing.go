@@ -48,7 +48,7 @@ func PostYesterDay() {
 	//yesterDayPv
 	pvUrl := "https://log.ideapar.com/countQuery?query=select count(*) from pv where date > \"" + startDate + "\" and date < \"" + endDate + "\""
 	uvUrl := "https://log.ideapar.com/countQuery?query=select count(distinct userIp) from pv where date > \"" + startDate + "\" and date < \"" + endDate + "\""
-	newIpUrl := "https://log.ideapar.com/countQuery?query=select count(distinct userIp) from pv where date > \"" + startDate + "\" and date < \"" + endDate + "\""
+	newIpUrl := "https://log.ideapar.com/countQuery?query=select count(distinct userIp) from pv where date > \"" + startDate + "\" and date < \"" + endDate + "\"" + "and userIp not in (select userIp from pv where date < \""+startDate+"\")"
 	rqtUrl := "https://www.ideapar.com/fetchOperateData?queryType=yesterday-rqt"
 	desingerUrl := "https://www.ideapar.com/fetchOperateData?queryType=yesterday-desinger"
 	prooferUrl := "https://www.ideapar.com/fetchOperateData?queryType=yesterday-proofer"

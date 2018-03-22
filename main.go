@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 	"ideaparLog/cmd/postToDingDing"
+	"ideaparLog/cmd/readPvLog"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 	go func() {
 		for _ = range ticker.C {
 			fmt.Println("start read log")
-			//readPvLog.Run()
+			readPvLog.Run()
 
 			now := time.Now()
 			fmt.Println(now)
